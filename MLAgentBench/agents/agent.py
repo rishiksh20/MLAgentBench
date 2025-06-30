@@ -12,19 +12,20 @@ import MLAgentBench.high_level_actions as high_level_actions
 from MLAgentBench.schema import Action, EnhancedJSONEncoder
 from MLAgentBench.LLM import complete_text
 
-initial_prompt = """You are a helpful research assistant. You have access to the following tools:
-{tools_prompt}
+# initial_prompt = """You are a helpful research assistant. You have access to the following tools:
+# {tools_prompt}
 
-Research Problem: {task_description}
+# Research Problem: {task_description}
 
-Always respond in this format exactly:
-{format_prompt}
-Observation: 
-```
-the result of the action
-```
+# Always respond in this format exactly:
+# {format_prompt}
+# Observation: 
+# ```
+# the result of the action
+# ```
 
-"""
+# """
+initial_prompt = """{task_description}"""
 
 format_prompt_dict = {
     "Thought": "What you are currently doing, what actions to perform and why",

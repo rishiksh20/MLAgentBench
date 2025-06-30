@@ -80,16 +80,51 @@ def log_to_file(log_file, prompt, completion, model, max_tokens_to_sample):
         f.write(f"Number of sampled tokens: {num_sample_tokens}\n")
         f.write("\n\n")
 
+
+
+import os, requests, json
+def complete_text_openrouter(prompt: str, log_file: str, model: str, max_tokens_to_sample = 2000, **kwargs) -> str:
+    """
+    Call OpenRouter’s chat endpoint with Qwen-3-8B.
+    """
+    url = os.getenv("OPENROUTER_API_URL")
+    key = os.getenv("OPENROUTER_API_KEY")
+    headers = {
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json",
+    }
+    body = {
+        "model": model,          # e.g. "qwen-3-8b/32k"
+        "messages": [{"role":"user","content": prompt}],
+        # you can add temperature, max_tokens, stop, etc here:
+        # "temperature": 0.7,
+        # "max_tokens": kwargs.get("max_tokens", 1024),
+    }
+    resp = requests.post(url, headers=headers, json=body, timeout=900)
+    resp.raise_for_status()
+    data = resp.json()
+    print("\n+++++++++ DATA ++++++++++\n", data)
+    # adjust depending on OpenRouter’s response schema:
+    text = data["choices"][0]["message"]["content"]
+    if log_file:
+        log_to_file(log_file, prompt, text, f"openrouter//{model}", max_tokens_to_sample)
+    return text
+
+
+
+
+
+
 def complete_text_hf(prompt, stop_sequences=[], model="huggingface/codellama/CodeLlama-7b-hf", max_tokens_to_sample = 2000, temperature=0.5, log_file=None, **kwargs):
     model = model.split("/", 1)[1]
     if model in loaded_hf_models:
         hf_model, tokenizer = loaded_hf_models[model]
     else:
-        hf_model = AutoModelForCausalLM.from_pretrained(model).to("cuda:9")
+        hf_model = AutoModelForCausalLM.from_pretrained(model).to("cpu")
         tokenizer = AutoTokenizer.from_pretrained(model)
         loaded_hf_models[model] = (hf_model, tokenizer)
         
-    encoded_input = tokenizer(prompt, return_tensors="pt", return_token_type_ids=False).to("cuda:9")
+    encoded_input = tokenizer(prompt, return_tensors="pt", return_token_type_ids=False).to("cpu")
     stop_sequence_ids = tokenizer(stop_sequences, return_token_type_ids=False, add_special_tokens=False)
     stopping_criteria = StoppingCriteriaList()
     for stop_sequence_input_ids in stop_sequence_ids.input_ids:
@@ -263,7 +298,12 @@ def complete_text_openai(prompt, stop_sequences=[], model="gpt-3.5-turbo", max_t
 def complete_text(prompt, log_file, model, **kwargs):
     """ Complete text using the specified model with appropriate API. """
     
-    if model.startswith("claude"):
+    if model.startswith("openrouter//"):
+        # strip off the prefix
+        repo = model.split("//",1)[1]
+        return complete_text_openrouter(prompt, log_file, repo, **kwargs)
+    
+    elif model.startswith("claude"):
         # use anthropic API
         completion = complete_text_claude(prompt, stop_sequences=[anthropic.HUMAN_PROMPT, "Observation:"], log_file=log_file, model=model, **kwargs)
     elif model.startswith("gemini"):

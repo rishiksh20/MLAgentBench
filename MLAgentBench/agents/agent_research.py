@@ -33,6 +33,10 @@ the result of the action
 
 """
 
+# initial_prompt = """
+# {task_description}
+# """
+
 
 format_prompt_dict = {
     "Reflection": "What does the observation mean? If there is an error, what caused the error and how to debug?",
@@ -85,8 +89,8 @@ class ResearchAgent(Agent):
         ```
         Here are the exact several steps you have done most recently (up to 3 steps):
         """
-            else:
-                prompt += "\nNow let's start!\n\n"
+            # else:
+            #     prompt += "\nNow let's start!\n\n"
 
             for idx in range(max(curr_step - last_steps, 0), curr_step):
                 action_string = ""
