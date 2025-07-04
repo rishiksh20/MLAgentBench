@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/rishikesh/Documents/GitHub/MLAgentBench/MLAgentBench/runner.py", line 31, in run
+    final_message = agent.run(env)
+                    ^^^^^^^^^^^^^^
+  File "/Users/rishikesh/Documents/GitHub/MLAgentBench/MLAgentBench/agents/agent_research.py", line 119, in run
+    completion = complete_text(prompt, log_file, self.args.llm_name)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rishikesh/Documents/GitHub/MLAgentBench/MLAgentBench/LLM.py", line 304, in complete_text
+    return complete_text_openrouter(prompt, log_file, repo, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rishikesh/Documents/GitHub/MLAgentBench/MLAgentBench/LLM.py", line 108, in complete_text_openrouter
+    text = data["choices"][0]["message"]["content"]
+           ~~~~^^^^^^^^^^^
+KeyError: 'choices'

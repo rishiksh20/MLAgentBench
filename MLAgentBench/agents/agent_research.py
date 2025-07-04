@@ -15,6 +15,7 @@ You do not know anything about this problem so far.
 
 Follow these instructions and do not forget them:
 - First, come up with a high level plan based on your understanding of the problem and available tools and record it in the Research Plan and Status. You can revise the plan later.
+- Take only one Action in each step and make only one observation based on the Action's results.
 - Research Plan and Status should well organized and succinctly keep track of 1) high level plan (can be revised), 2) what steps have been done and what steps are in progress, 3) short results and conclusions of each step after it has been performed. 
 - Research Plan and Status must only include progress that has been made by previous steps. It should not include results not directly confirmed by the previous observation. 
 - Performance numbers and estimates can only be confirmed and included in the status by running the code and observing the output.
@@ -22,7 +23,7 @@ Follow these instructions and do not forget them:
 - Follow the plan and try to achieve the goal as straightforwardly as possible.
 - Highlight the supporting experiment results and reasoning before drawing any conclusions. 
 - Do not try installing any new packages or libraries.
-- If you believe you have solved the problem, you can use the Final Answer action to submit your answer. You can only submit once, so double check that you have achieved the goal before submitting.
+- Ensure you have solved the problem and all the tasks and steps completely. If you believe you have solved the problem, you can use the Final Answer action to submit your answer. You can only submit once, so double check that you have achieved the goal before submitting.
 
 Always respond in this format exactly:
 {format_prompt}
@@ -30,6 +31,7 @@ Observation:
 ```
 the result of the action
 ```
+Take only one Action in each step and make only one observation based on the Action's results.
 
 """
 
@@ -53,7 +55,7 @@ class ResearchAgent(Agent):
 
     def __init__(self, args, env):
         super().__init__(args, env)
-        self.valid_format_entires = ["Reflection",  "Research Plan and Status","Fact Check", "Thought","Action", "Action Input"] # use all entries by default
+        self.valid_format_entires = ["Reflection",  "Research Plan and Status", "Fact Check", "Thought", "Action", "Action Input"] # use all entries by default
         if args.valid_format_entires:
             self.valid_format_entires = args.valid_format_entires
         self.initial_prompt = initial_prompt.format(tools_prompt=self.tools_prompt, tool_names=self.prompt_tool_names,  task_description=env.research_problem, format_prompt="\n".join([f"{k}: {format_prompt_dict[k]}" for k in self.valid_format_entires]))
@@ -89,8 +91,8 @@ class ResearchAgent(Agent):
         ```
         Here are the exact several steps you have done most recently (up to 3 steps):
         """
-            # else:
-            #     prompt += "\nNow let's start!\n\n"
+            else:
+                prompt += "\nNow let's start!\n\n"
 
             for idx in range(max(curr_step - last_steps, 0), curr_step):
                 action_string = ""
@@ -118,6 +120,7 @@ class ResearchAgent(Agent):
 
                 try:
                     entries = self.parse_entries(completion, self.valid_format_entires)
+                    print(f'+++++ ENTRIES +++++ {entries["Action"]}')
                     assert entries["Action"].strip() in self.all_tool_names
                     valid_response = True
                 except:
@@ -162,6 +165,7 @@ class ResearchAgent(Agent):
             ########################################
 
             if type(action_input) == dict:
+                print(f'\n\n+++++++ TAKING ACTION +++++++\n {action}, {action_input} \n')
                 observation = env.execute(Action(action, action_input))
             else:
                 # parsing failed, give agent parsing error

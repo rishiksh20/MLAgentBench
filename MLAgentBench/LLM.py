@@ -98,11 +98,17 @@ def complete_text_openrouter(prompt: str, log_file: str, model: str, max_tokens_
         "messages": [{"role":"user","content": prompt}],
         # you can add temperature, max_tokens, stop, etc here:
         # "temperature": 0.7,
-        # "max_tokens": kwargs.get("max_tokens", 1024),
+        # "max_tokens": 28000,
+        "stop": ["Observation:"]
     }
-    resp = requests.post(url, headers=headers, json=body, timeout=900)
+    resp = requests.post(url, headers=headers, json=body, timeout=1000)
     resp.raise_for_status()
+    # try:
+    print(resp.headers["Content-Type"])
     data = resp.json()
+    # except ValueError:
+    #     print('RESPONSE IS INVALID JSON FOR SOME REASON.')
+    #     data = resp.text.strip()
     print("\n+++++++++ DATA ++++++++++\n", data)
     # adjust depending on OpenRouter’s response schema:
     text = data["choices"][0]["message"]["content"]
@@ -301,6 +307,7 @@ def complete_text(prompt, log_file, model, **kwargs):
     if model.startswith("openrouter//"):
         # strip off the prefix
         repo = model.split("//",1)[1]
+        print(f'$$$$ MODEL - {repo} $$$$')
         return complete_text_openrouter(prompt, log_file, repo, **kwargs)
     
     elif model.startswith("claude"):

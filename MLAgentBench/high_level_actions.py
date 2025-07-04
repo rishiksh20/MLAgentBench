@@ -73,7 +73,7 @@ def understand_file( file_name, things_to_look_for, work_dir = ".", **kwargs):
 
         return completion
 
-EDIT_SCRIPT_MODEL = "claude-v1"
+EDIT_SCRIPT_MODEL = "openrouter//qwen/qwen3-8b" #"claude-v1"
 EDIT_SCRIPT_MAX_TOKENS = 4000
 def edit_script(script_name, edit_instruction, save_name, work_dir = ".", **kwargs):
     #TODO: handle long file editing
