@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/rishikesh/Documents/GitHub/MLAgentBench/MLAgentBench/runner.py", line 31, in run
+    final_message = agent.run(env)
+                    ^^^^^^^^^^^^^^
+  File "/Users/rishikesh/Documents/GitHub/MLAgentBench/MLAgentBench/agents/agent_research.py", line 141, in run
+    print(f'\n\n+++++++++ ACTION +++++++++ {action}, {action_input}\n\n')
+                                                      ^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'action_input' where it is not associated with a value
