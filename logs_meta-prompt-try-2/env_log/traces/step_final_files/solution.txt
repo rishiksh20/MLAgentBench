@@ -1,0 +1,8 @@
+# Correct implementation of a function to calculate the sum of a list
+def calculate_sum(numbers):
+    return sum(numbers)
+
+# Example usage
+numbers = [1, 2, 3, 4, 5]
+result = calculate_sum(numbers)
+print(result)

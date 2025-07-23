@@ -77,19 +77,35 @@ EDIT_SCRIPT_MODEL = "openrouter//qwen/qwen3-8b" #"claude-v1"
 EDIT_SCRIPT_MAX_TOKENS = 4000
 def edit_script(script_name, edit_instruction, save_name, work_dir = ".", **kwargs):
     #TODO: handle long file editing
+    print(work_dir)
     try:
+        print('reading file')
         content = read_file(script_name, work_dir = work_dir, **kwargs)
     except:
+        print('writing file')
         write_file(script_name, "", work_dir = work_dir, **kwargs)
         content = ""
         
-    prompt = f"""Given this python script:
+    # prompt = f"""Given this python script:
+    # ```python 
+    # {content}
+    # ```
+    # Edit the script by following the instruction:
+    # {edit_instruction}
+    # Provide the full code after the edit, making no other changes. Start the python code with "```python". 
+
+    # """
+    prompt = f"""Given this file:
     ```python 
     {content}
     ```
     Edit the script by following the instruction:
     {edit_instruction}
-    Provide the full code after the edit, making no other changes. Start the python code with "```python". 
+    Identify whether the instruction asks to write a code/function or add text. 
+    If the instruction asks to make the file with specific text content, simply add those statements as comments.
+    If the instruction asks to make the file with specific code/function content, write the python code.
+    Only do either of the above 2 items.
+    Provide the file after the edit, making no other changes. Start the python code with "```python".
 
     """
 
@@ -228,7 +244,7 @@ HIGH_LEVEL_ACTIONS =[
     ),
     ActionInfo(
         name="Edit Script (AI)",
-        description="Use this to do a relatively large but cohesive edit over a python script. Instead of editing the script directly, you should describe the edit instruction so that another AI can help you do this.",
+        description="Use this to do a relatively large but cohesive edit over a python script or file. Instead of editing the script/file directly, you should describe the edit instruction so that another AI can help you do this. Be sure to explicitly mention whether you need to edit a python code or a text file in edit_instruction.",
         usage={
             "script_name": "a valid python script name with relative path to current directory if needed. An empty sctipt will be created if it does not exist.",
             "edit_instruction": "a detailed step by step description on how to edit it.",

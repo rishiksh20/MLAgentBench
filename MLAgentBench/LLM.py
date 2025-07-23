@@ -103,12 +103,12 @@ def complete_text_openrouter(prompt: str, log_file: str, model: str, max_tokens_
     }
     resp = requests.post(url, headers=headers, json=body, timeout=1000)
     resp.raise_for_status()
-    # try:
-    print(resp.headers["Content-Type"])
-    data = resp.json()
-    # except ValueError:
-    #     print('RESPONSE IS INVALID JSON FOR SOME REASON.')
-    #     data = resp.text.strip()
+    try:
+        print(resp.headers["Content-Type"])
+        data = resp.json()
+    except ValueError:
+        print('RESPONSE IS INVALID JSON FOR SOME REASON.')
+        data = resp.text.strip()
     print("\n+++++++++ DATA ++++++++++\n", data)
     # adjust depending on OpenRouter’s response schema:
     text = data["choices"][0]["message"]["content"]

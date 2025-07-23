@@ -6,12 +6,15 @@ from MLAgentBench.LLM import complete_text_fast, complete_text
 from MLAgentBench.schema import Action
 from .agent import Agent
 
+
+# after research problem 
+# You do not know anything about this problem so far. 
+
 initial_prompt = """You are a helpful research assistant. You have access to the following tools:
 {tools_prompt}
+While using these tools make sure to be highly specific for using Action Inputs.
 
 Research Problem: {task_description}
-
-You do not know anything about this problem so far. 
 
 Follow these instructions and do not forget them:
 - First, come up with a high level plan based on your understanding of the problem and available tools and record it in the Research Plan and Status. You can revise the plan later.
